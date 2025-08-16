@@ -1,0 +1,5 @@
+package com.gmail.terry996996.dao;
+
+public class MovieBeanDAOImpl implements MovieDAO {
+
+}

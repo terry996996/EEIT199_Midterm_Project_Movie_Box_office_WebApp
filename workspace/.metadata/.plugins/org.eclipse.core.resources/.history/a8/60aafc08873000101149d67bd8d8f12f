@@ -1,0 +1,9 @@
+package com.gmail.terry996996.dao;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gmail.terry996996.domain.UserBean;
+
+public interface UserDAO extends JpaRepository<UserBean, Integer>{
+
+}

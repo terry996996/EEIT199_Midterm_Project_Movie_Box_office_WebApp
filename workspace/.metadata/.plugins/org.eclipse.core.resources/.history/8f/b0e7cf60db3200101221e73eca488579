@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>搜尋結果</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/cat.gif}"
+			style="width: 100px; position: fixed;" />
+		<div align="center">
+			<h1>搜尋結果</h1>
+
+
+			<p th:if="${moviePage.totalElements > 0}"
+				style="font-weight: bold; color: red;">
+				共找到 <span th:text="${moviePage.totalElements}"></span> 筆結果
+			</p>
+
+
+
+			<p th:if="${moviePage.totalElements == 0}"
+				style="font-weight: bold; color: red;">沒有找到符合的結果</p>
+
+
+			<hr>
+			<br> <span th:if="${session.user != null}"
+				style="font-size: larger; color: rgb(227, 29, 187)">
+				使用者:&nbsp;&nbsp;<b th:text="${session.user.account}"
+				style="font-size: larger; color: rgb(227, 29, 187)">使用者</b>
+			</span> <br> <br>
+
+			<div style="text-align: center;">
+				<div
+					style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+
+					<div class="menu-button">
+						<a th:href="@{/movies/index}">回首頁</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/findall}">查看所有電影列表</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/create}">新增電影</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/upload}">上傳檔案</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/changePassword}">修改密碼</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/logout}">登出</a>
+					</div>
+
+				</div>
+			</div>
+
+			<br>
+
+
+			<form th:action="@{/movies/advanced}" method="get">
+				<input type="text" name="country" placeholder="國別地區" /> <input
+					type="text" name="movieName" placeholder="中文片名" /> <input
+					type="text" name="applicant" placeholder="申請公司" /> <input
+					type="text" name="prodUnit" placeholder="出品單位" /> <input
+					type="number" name="minTheaterNum" placeholder="最小上映院數" /> <input
+					type="number" name="maxTheaterNum" placeholder="最大上映院數" /> <input
+					type="number" name="minBoxOffice" placeholder="最小票房" /> <input
+					type="number" name="maxBoxOffice" placeholder="最大票房" />
+				<button type="submit">進階查詢</button>
+			</form>
+
+		</div>
+
+		<div align="center">
+			<br>
+			<table class="modern-table">
+				<thead>
+					<tr>
+						<th>序號</th>
+						<th>國別地區</th>
+						<th>中文片名</th>
+						<th>申請公司</th>
+						<th>出品單位</th>
+						<th>上映院數</th>
+						<th>銷售票房</th>
+						<th>銷售金額</th>
+						<th>建立者</th>
+						<th>建立時間</th>
+						<th>修改者</th>
+						<th>修改時間</th>
+						<th>操作按紐</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr th:if="${moviePage.totalElements == 0}">
+						<td colspan="13" align="center">查無資料</td>
+					</tr>
+					<tr th:each="movie, stat : ${moviePage.content}"
+						th:class="${stat.even} ? 'even-row' : 'odd-row'">
+						<td th:text="${movie.movieid}" style="text-align: center;">1</td>
+						<td th:text="${movie.country}" style="width: 30px;">國別地區</td>
+						<td th:text="${movie.movieName}"
+							style="width: 250px; text-align: center;">片名</td>
+						<td th:text="${movie.applicant}"
+							style="width: 250px; text-align: center;">申請公司</td>
+						<td th:text="${movie.prodUnit}"
+							style="width: 250px; text-align: center;">出品單位</td>
+						<td th:text="${movie.showTheaterNum}"
+							style="width: 30px; text-align: center;">院數</td>
+						<td th:text="${movie.boxOffice}">票房</td>
+						<td th:text="${movie.sales}">金額</td>
+						<td th:text="${movie.createName}">建立者</td>
+						<td
+							th:text="${#temporals.format(movie.createTime, 'yyyy-MM-dd HH:mm:ss')}">建立時間</td>
+						<td th:text="${movie.updateName}">修改者</td>
+						<td
+							th:text="${#temporals.format(movie.updateTime, 'yyyy-MM-dd HH:mm:ss')}">修改時間</td>
+						<td><div class="action-button edit-btn">
+								<a th:href="@{'/movies/edit/' + ${movie.movieid}}">編輯</a>
+							</div> <br>
+							<div class="action-button delete-btn">
+								<a th:href="@{'/movies/delete/' + ${movie.movieid}}"
+									onclick="return confirm('確定刪除？')">刪除</a>
+							</div></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<br>
+
+		<div class="pagination" align="center"
+			th:if="${moviePage.totalPages > 1}">
+
+			<!-- 顯示當前頁 / 總頁數 -->
+			<div style="margin: 10px;">
+				<span>第 <span th:text="${currentPage + 1}"></span> 頁 / 共 <span
+					th:text="${moviePage.totalPages}"></span> 頁
+				</span>
+			</div>
+
+			<!-- 最前頁 -->
+			<a th:if="${!moviePage.first}"
+				th:href="@{/movies/advanced(
+        country=${param.country},
+        movieName=${param.movieName},
+        applicant=${param.applicant},
+        prodUnit=${param.prodUnit},
+        minTheaterNum=${param.minTheaterNum},
+        maxTheaterNum=${param.maxTheaterNum},
+        minBoxOffice=${param.minBoxOffice},
+        maxBoxOffice=${param.maxBoxOffice},
+        page=${currentPage - 1})}">&laquo;
+				上一頁</a> <span th:if="${moviePage.first}" class="disabled">&laquo;
+				最前頁</span>
+
+			<!-- 上一頁 -->
+			<a th:if="${!moviePage.first}"
+				th:href="@{/movies/search(keyword=${keyword}, country=${country}, page=${currentPage - 1})}">&laquo;
+				上一頁</a> <span th:if="${moviePage.first}" class="disabled">&laquo;
+				上一頁</span>
+
+			<!-- 動態頁碼 -->
+			<span th:each="i : ${#numbers.sequence(startPage, endPage)}">
+				<a
+				th:href="@{/movies/search(keyword=${keyword}, country=${country}, page=${i})}"
+				th:text="${i + 1}"
+				th:class="${i == currentPage} ? 'active disabled' : ''"></a>
+			</span>
+
+			<!-- 下一頁 -->
+			<a th:if="${!moviePage.last}"
+				th:href="@{/movies/search(keyword=${keyword}, country=${country}, page=${currentPage + 1})}">下一頁
+				&raquo;</a> <span th:if="${moviePage.last}" class="disabled">下一頁
+				&raquo;</span>
+
+			<!-- 最後頁 -->
+			<a th:if="${!moviePage.last}"
+				th:href="@{/movies/search(keyword=${keyword}, country=${country}, page=${moviePage.totalPages - 1})}">最後頁
+				&raquo;</a> <span th:if="${moviePage.last}" class="disabled">最後頁
+				&raquo;</span>
+
+			<!-- 跳頁下拉選單 -->
+			<form th:action="@{/movies/advancedsearch}" method="get" style="margin: 10px;">
+    <input type="hidden" name="country" th:value="${param.country}" />
+    <input type="hidden" name="movieName" th:value="${param.movieName}" />
+    <input type="hidden" name="applicant" th:value="${param.applicant}" />
+    <input type="hidden" name="prodUnit" th:value="${param.prodUnit}" />
+    <input type="hidden" name="minTheaterNum" th:value="${param.minTheaterNum}" />
+    <input type="hidden" name="maxTheaterNum" th:value="${param.maxTheaterNum}" />
+    <input type="hidden" name="minBoxOffice" th:value="${param.minBoxOffice}" />
+    <input type="hidden" name="maxBoxOffice" th:value="${param.maxBoxOffice}" />
+    <label for="pageSelect">跳轉至：</label>
+    <select name="page" id="pageSelect" onchange="this.form.submit()">
+        <option th:each="i : ${#numbers.sequence(0, moviePage.totalPages - 1)}"
+                th:value="${i}" th:text="${i + 1}"
+                th:selected="${i == currentPage}">1</option>
+    </select>
+</form>
+
+		</div>
+
+
+	</div>
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+			  		
+			  		document.getElementById("searchForm").addEventListener("submit", function(event) {
+        					const keywordInput = document.getElementById("keyword").value.trim();
+        					if (keywordInput === "") {
+            				alert("請輸入關鍵字再進行搜尋！");
+            				event.preventDefault();
+				        	}
+				    });
+		</script>
+
+
+
+</body>
+</html>

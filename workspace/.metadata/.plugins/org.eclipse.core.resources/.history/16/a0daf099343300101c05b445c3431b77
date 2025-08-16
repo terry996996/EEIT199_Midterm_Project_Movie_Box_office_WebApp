@@ -1,0 +1,58 @@
+package com.gmail.terry996996.dao;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.gmail.terry996996.domain.MovieBean;
+
+public interface MovieDAO extends JpaRepository<MovieBean, Integer>{
+
+	 // 同時用片名和國家模糊查詢
+    @Query("SELECT m FROM MovieBean m WHERE " +
+           "LOWER(m.movieName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(m.country) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<MovieBean> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    
+    
+    
+    
+    
+    
+    @Query("""
+    	    SELECT m FROM MovieBean m
+    	    WHERE (:country IS NULL OR m.country LIKE %:country%)
+    	      AND (:movieName IS NULL OR m.movieName LIKE %:movieName%)
+    	      AND (:applicant IS NULL OR m.applicant LIKE %:applicant%)
+    	      AND (:prodUnit IS NULL OR m.prodUnit LIKE %:prodUnit%)
+    	      AND (:minTheaterNum IS NULL OR m.showTheaterNum >= :minTheaterNum)
+    	      AND (:maxTheaterNum IS NULL OR m.showTheaterNum <= :maxTheaterNum)
+    	      AND (:minBoxOffice IS NULL OR m.boxOffice >= :minBoxOffice)
+    	      AND (:maxBoxOffice IS NULL OR m.boxOffice <= :maxBoxOffice)
+    	""")
+    	Page<MovieBean> advancedSearch(
+    	    @Param("country") String country,
+    	    @Param("movieName") String movieName,
+    	    @Param("applicant") String applicant,
+    	    @Param("prodUnit") String prodUnit,
+    	    @Param("minTheaterNum") Integer minTheaterNum,
+    	    @Param("maxTheaterNum") Integer maxTheaterNum,
+    	    @Param("minBoxOffice") Long minBoxOffice,
+    	    @Param("maxBoxOffice") Long maxBoxOffice,
+    	    Pageable pageable
+    	);
+
+
+}
+
+
+
+
+
+
+

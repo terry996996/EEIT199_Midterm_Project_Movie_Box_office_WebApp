@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>歡迎頁面</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div align='center'>
+		<h1>歡迎頁面</h1>
+
+		<a th:href="@{/movies/findall}">查看所有電影列表</a> | <a
+			th:href="@{/movies/create}">新增電影</a> | <a th:href="@{/movies/upload}">上傳檔案</a>
+		| <a th:href="@{/logout}">登出</a>
+
+		<form th:action="@{/movies/search}" method="get">
+			<input type="text" name="keyword" placeholder="輸入片名關鍵字" /> <input
+				type="text" name="country" placeholder="輸入國家關鍵字" />
+			<button type="submit">搜尋</button>
+		</form>
+
+
+		<br>
+		<img th:src="@{/images/movie.jpg}" alt="movie" width="700" height="700">
+
+
+	</div>
+</body>
+</html>

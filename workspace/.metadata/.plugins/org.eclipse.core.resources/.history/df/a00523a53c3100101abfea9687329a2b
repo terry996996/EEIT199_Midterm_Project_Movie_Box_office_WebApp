@@ -1,0 +1,81 @@
+package com.gmail.terry996996.util;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.gmail.terry996996.dao.MovieDAO;
+import com.gmail.terry996996.domain.MovieBean;
+
+@Service
+public class CsvImporter {
+
+    @Autowired
+    private MovieDAO movieDAO;
+
+    public void importCsv(String csvFilePath) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            boolean isFirstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                // 略過標題列
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    continue;
+                }
+
+                // 使用逗號分隔
+                String[] rawFields = line.split(",");
+
+                // 處理：合併千分位錯誤切分（票數與金額會有逗號）
+                List<String> fields = new ArrayList<>();
+                StringBuilder sb = new StringBuilder();
+                for (String raw : rawFields) {
+                    if (sb.length() > 0) {
+                        sb.append(",").append(raw);
+                        if (raw.endsWith("\"")) {
+                            fields.add(sb.toString());
+                            sb.setLength(0);
+                        }
+                    } else if (raw.startsWith("\"") && !raw.endsWith("\"")) {
+                        sb.append(raw);
+                    } else {
+                        fields.add(raw);
+                    }
+                }
+
+                // 資料清理：每個欄位做 trim() + 去除雙引號
+                for (int i = 0; i < fields.size(); i++) {
+                    fields.set(i, fields.get(i).trim().replace("\"", ""));
+                }
+
+                // 建立 Movie 物件
+                MovieBean movie = new MovieBean();
+                movie.setCountry(fields.get(0));
+                movie.setMovieName(fields.get(1));
+                movie.setApplicant(fields.get(3));
+                movie.setProdUnit(fields.get(4));
+                movie.setShowTheaterNum(Integer.parseInt(fields.get(5)));
+                movie.setBoxOffice(Long.parseLong(fields.get(6).replace(",", "")));
+                movie.setSales(Long.parseLong(fields.get(7).replace(",", "")));
+
+                // 系統欄位設定
+                movie.setCreateTime(LocalDateTime.now());
+                movie.setCreateName("admin");
+                movie.setUpdateTime(LocalDateTime.now());
+                movie.setUpdateName("admin");
+
+                // 存入資料庫
+                movieDAO.save(movie);
+            }
+        }
+    }
+}

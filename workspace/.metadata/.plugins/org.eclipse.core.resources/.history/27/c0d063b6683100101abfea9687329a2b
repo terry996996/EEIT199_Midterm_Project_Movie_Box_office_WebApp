@@ -1,0 +1,22 @@
+package com.gmail.terry996996.dao;
+
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
+
+import com.gmail.terry996996.domain.MovieBean;
+import com.gmail.terry996996.domain.UserBean;
+
+public interface UserDAO extends JpaRepository<UserBean, Integer> {
+
+	Optional<UserBean> findByAccountAndPassword(String account, String password);
+
+	Optional<UserBean> findByAccount(String account);
+
+	Page<MovieBean> searchByMovieNameOrCountry(@Param("movieName") String movieName, @Param("country") String country,
+			Pageable pageable);
+
+}

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>歡迎頁面</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+		<h1>歡迎頁面</h1>
+		
+		<span th:if="${session.user != null}">
+        使用者:&nbsp;&nbsp;<b th:text="${session.user.account}">使用者</b></span>
+        
+        <br>
+        <br>
+
+		<div style="text-align: center;">
+			<div
+				style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+
+				<div class="menu-button">
+					<a th:href="@{/movies/index}">回首頁</a>
+				</div>
+
+				<div class="menu-button active">
+					<a th:href="@{/movies/}">回首頁</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/movies/create}">新增電影</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/upload}">上傳檔案</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/changePassword}">修改密碼</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/logout}">登出</a>
+				</div>
+
+			</div>
+		</div>
+
+
+		<form th:action="@{/movies/search}" method="get">
+			<input type="text" name="keyword" placeholder="輸入片名關鍵字" /> <input
+				type="text" name="country" placeholder="輸入國家關鍵字" />
+			<button type="submit">搜尋</button>
+		</form>
+
+
+		<br> <img th:src="@{/images/movie.jpg}" alt="movie" width="700"
+			height="700">
+
+	</div>
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+		</script>
+</body>
+</html>

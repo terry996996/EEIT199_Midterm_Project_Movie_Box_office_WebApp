@@ -1,0 +1,47 @@
+package com.gmail.terry996996.util;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gmail.terry996996.dao.MovieDAO;
+
+public class CsvImporter {
+	 @Autowired
+	 private MovieDAO dao;
+	 public void importCsv(String csvFilePath) throws IOException {
+	        // 讀取 CSV 檔案
+	        BufferedReader reader = new BufferedReader(new FileReader(csvFilePath));
+	        Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(reader);
+
+	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd");
+
+	        for (CSVRecord record : records) {
+	            // 讀取 CSV 中的每一筆資料，根據索引處理
+	            MovieBean movie = new MovieBean();
+	            movie.setCountry(record.get(0));  // 國別地區
+	            movie.setMovieName(record.get(1));  // 中文片名
+	            movie.setShowtimes(LocalDate.parse(record.get(2), formatter));  // 上映日期 (轉換為 LocalDate)
+	            movie.setApplicant(record.get(3));  // 申請人
+	            movie.setProdUnit(record.get(4));  // 出品
+	            movie.setShowTheaterNum(Integer.parseInt(record.get(5)));  // 上映院數 (轉換為整數)
+	            movie.setBoxOffice(Integer.parseInt(record.get(6).replace(",", "")));  // 銷售票數 (移除千位符號並轉換為整數)
+	            movie.setSales(Long.parseLong(record.get(7).replace(",", "")));  // 銷售金額 (移除千位符號並轉換為長整數)
+
+	            // 設定時間和使用者
+	            movie.setCreateTime(LocalDate.now());
+	            movie.setCreateName("admin");  // 假設預設為 admin
+	            movie.setUpdateTime(LocalDate.now());
+	            movie.setUpdateName("admin");  // 假設預設為 admin
+
+	            // 儲存至資料庫
+	            dao.save(movie);
+	        }
+
+	        reader.close();
+	    }
+	}

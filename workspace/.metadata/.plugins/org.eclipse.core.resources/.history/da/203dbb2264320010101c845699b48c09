@@ -1,0 +1,113 @@
+package com.gmail.terry996996.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.gmail.terry996996.dao.UserDAO;
+import com.gmail.terry996996.domain.UserBean;
+
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+
+@Controller
+public class LoginController {
+	@Autowired
+	private UserDAO dao;
+
+	@GetMapping("/login")
+	public String showLoginForm(Model model) {
+		model.addAttribute("user", new UserBean());
+		return "movies/login";
+	}
+
+	@PostMapping("/login")
+	public String processLogin(@ModelAttribute("user") UserBean user, Model model, HttpSession session) {
+		return dao.findByAccountAndPassword(user.getAccount(), user.getPassword()).map(account -> {
+			session.setAttribute("user", account);
+			return "redirect:/movies/index"; // 登入成功
+		}).orElseGet(() -> {
+			model.addAttribute("loginError", "帳號或密碼錯誤");
+			return "movies/login";
+		});
+	}
+
+	@GetMapping("/register")
+	public String showRegisterForm(Model model) {
+		model.addAttribute("user", new UserBean());
+		return "movies/register";
+	}
+
+	@PostMapping("/register")
+	public String processRegister(@Valid @ModelAttribute("user") UserBean user, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+		if (dao.findByAccount(user.getAccount()).isPresent()) {
+			result.rejectValue("account", "error.user", "帳號已被使用");
+		}
+
+		if (result.hasErrors()) {
+			return "movies/register";
+		}
+
+		dao.save(user);
+		return "redirect:/login";
+		
+		
+	}
+
+	@GetMapping("/logout")
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "redirect:/login";
+	}
+
+	// 處理密碼修改
+	// 修改密碼
+	// 顯示修改密碼頁面
+	
+	@GetMapping("/changePassword")
+	public String showChangePasswordForm(HttpSession session) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+		return "movies/password";
+	}
+
+	@PostMapping("/changePassword")
+	public String changePassword(@RequestParam String oldPassword, @RequestParam String newPassword,
+			@RequestParam String confirmPassword, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
+
+		UserBean loginUser = (UserBean) session.getAttribute("user");
+
+		if (loginUser == null) {
+			return "redirect:/login";
+		}
+
+
+		 if (!loginUser.getPassword().equals(oldPassword)) {
+		        model.addAttribute("error", "原密碼錯誤");
+		        return "movies/password";
+		    }
+
+		    if (!newPassword.equals(confirmPassword)) {
+		        model.addAttribute("error", "兩次輸入的新密碼不一致");
+		        return "movies/password";
+		    }
+
+		    // 修改密碼，儲存到資料庫
+		    loginUser.setPassword(newPassword);
+		    dao.save(loginUser);
+
+		    // 清除 session 中的登入資料
+		    session.removeAttribute("user");
+		    
+		    // 加入 Flash Attribute 並導回登入頁面
+		    redirectAttributes.addFlashAttribute("success", "密碼修改成功，請重新登入");
+		    return "redirect:/login";
+		}
+}

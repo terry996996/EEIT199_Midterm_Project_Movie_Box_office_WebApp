@@ -1,0 +1,34 @@
+//package com.gmail.terry996996.controller;
+//
+//import com.gmail.terry996996.domain.LoginForm;
+//import jakarta.validation.Valid;
+//import org.springframework.stereotype.Controller;
+//import org.springframework.ui.Model;
+//import org.springframework.validation.BindingResult;
+//import org.springframework.web.bind.annotation.GetMapping;
+//import org.springframework.web.bind.annotation.PostMapping;
+//
+//@Controller
+//public class LoginController2 {
+//
+//    @GetMapping("/login")
+//    public String showLoginForm(Model model) {
+//        model.addAttribute("loginForm", new LoginForm());
+//        return "movies/login";  // 對應到 login.html
+//    }
+//
+//    @PostMapping("/login")
+//    public String processLogin(@Valid LoginForm loginForm, BindingResult result, Model model) {
+//        if (result.hasErrors()) {
+//            return "movies/login";
+//        }
+//
+//        // 實際驗證邏輯（例如比對帳密，這裡用假資料）
+//        if ("admin".equals(loginForm.getAccount()) && "password123".equals(loginForm.getPassword())) {
+//            return "redirect:/movies"; // 登入成功，導向主頁
+//        } else {
+//            model.addAttribute("loginError", "帳號或密碼錯誤");
+//            return "movies/login";
+//        }
+//    }
+//}

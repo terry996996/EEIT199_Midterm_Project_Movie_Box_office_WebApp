@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>電影票房統計表單</title>
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+		<h1>電影票房統計表單</h1>
+		<form th:action="@{/movies/update}" th:object="${movie}" method="post">
+			<input type="hidden" th:field="*{movieid}" /> <label>國別地區：</label> <input
+				type="text" th:field="*{country}" required /><br /> <label>中文片名：</label>
+			<input type="text" th:field="*{movieName}" required /><br /> <label>申請人：</label>
+			<input type="text" th:field="*{applicant}" required /><br /> <label>出品單位：</label>
+			<input type="text" th:field="*{prodUnit}" required /><br /> <label>上映院數：</label>
+			<input type="number" th:field="*{showTheaterNum}" required /><br />
+			<label>銷售票房：</label> <input type="number" th:field="*{boxOffice}"
+				required /><br /> <label>銷售金額：</label> <input type="number"
+				th:field="*{sales}" required /><br />
+
+			<button type="submit">儲存</button>
+			<a th:href="@{/movies/findall}">取消</a>
+		</form>
+	</div>
+</body>
+</html>

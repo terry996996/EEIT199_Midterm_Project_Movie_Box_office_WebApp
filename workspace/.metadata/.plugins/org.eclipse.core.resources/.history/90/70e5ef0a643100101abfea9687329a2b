@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>登入</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div id="testdiv">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+
+		<h2 style="text-align: center;">使用者登入</h2>
+
+		<form th:action="@{/login}" th:object="${user}" method="post">
+			<div align="center">
+				<label style="text-align: center;">帳號：</label> <input type="text"
+					th:field="*{account}" /> <span
+					th:if="${#fields.hasErrors('account')}" th:errors="*{account}"></span>
+			</div>
+			<div align="center">
+				<label>密碼：</label> <input type="password" th:field="*{password}" />
+				<span th:if="${#fields.hasErrors('password')}"
+					th:errors="*{password}"></span>
+			</div>
+			<div align="center" th:if="${loginError}" style="color: red;">
+				<p th:text="${loginError}"></p>
+			</div>
+			<br>
+			<div align="center">
+				<button type="submit"
+					style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">登入</button>
+			</div>
+			<br>
+			<div align="center">
+				<a th:href="@{register}">還沒有帳號，點我立即註冊~</a>
+			</div>
+			<br>
+			<br>
+			<br>
+			<div align="center">
+				<img th:src="@{/images/login.jpg}" alt="login" width="300"
+					height="300">
+			</div>
+		</form>
+		<script>
+	const imgTag = document.querySelector('#floatingMouse');
+	 document.querySelector("#testdiv")
+			 .addEventListener('mousemove', (e) => {
+    			const offset = 20;
+    			const imgWidth = imgTag.offsetWidth;
+    			const imgHeight = imgTag.offsetHeight;
+    			const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    			const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    			imgTag.style.left = `${x}px`;
+    			imgTag.style.top = `${y}px`;
+			  });
+</script>
+	</div>
+</body>
+</html>

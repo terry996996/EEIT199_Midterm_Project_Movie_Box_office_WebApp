@@ -1,0 +1,16 @@
+package com.gmail.terry996996.util;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+public class CsvImporter {
+    public void importCsv(String csvLine) {
+        String[] fields = csvLine.split(",");
+        String dateString = fields[2]; // 假設第三欄是日期
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d"); // 解析原始格式
+        LocalDate showtimes = LocalDate.parse(dateString, formatter); // 轉換為 LocalDate
+
+        // 其他處理邏輯
+    }
+}

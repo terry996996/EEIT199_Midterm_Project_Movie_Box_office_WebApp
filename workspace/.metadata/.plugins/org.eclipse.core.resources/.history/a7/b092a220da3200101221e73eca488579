@@ -1,0 +1,61 @@
+package com.gmail.terry996996.dao;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.gmail.terry996996.domain.MovieBean;
+
+public interface MovieDAO extends JpaRepository<MovieBean, Integer>{
+
+	 // 同時用片名和國家模糊查詢
+    @Query("SELECT m FROM MovieBean m WHERE " +
+           "LOWER(m.movieName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+           "OR LOWER(m.country) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+    Page<MovieBean> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
+
+    
+    
+    
+    
+    
+    
+    @Query("""
+    	    SELECT m FROM MovieBean m
+    	    WHERE (:country IS NULL OR m.country LIKE %:country%)
+    	      AND (:movieName IS NULL OR m.movieName LIKE %:movieName%)
+    	      AND (:applicant IS NULL OR m.applicant LIKE %:applicant%)
+    	      AND (:prodUnit IS NULL OR m.prodUnit LIKE %:prodUnit%)
+    	      AND (:minTheaters IS NULL OR m.showTheaterNum >= :minTheaters)
+    	      AND (:maxTheaters IS NULL OR m.showTheaterNum <= :maxTheaters)
+    	      AND (:minBox IS NULL OR m.boxOffice >= :minBox)
+    	      AND (:maxBox IS NULL OR m.boxOffice <= :maxBox)
+    	      AND (:minSales IS NULL OR m.sales >= :minSales)
+    	      AND (:maxSales IS NULL OR m.sales <= :maxSales)
+    	""")
+    	List<MovieBean> advancedSearch(
+    	        @Param("country") String country,
+    	        @Param("movieName") String movieName,
+    	        @Param("applicant") String applicant,
+    	        @Param("prodUnit") String prodUnit,
+    	        @Param("minTheaters") Integer minTheaters,
+    	        @Param("maxTheaters") Integer maxTheaters,
+    	        @Param("minBox") Long minBox,
+    	        @Param("maxBox") Long maxBox,
+    	        @Param("minSales") Long minSales,
+    	        @Param("maxSales") Long maxSales
+    	);
+
+
+}
+
+
+
+
+
+
+

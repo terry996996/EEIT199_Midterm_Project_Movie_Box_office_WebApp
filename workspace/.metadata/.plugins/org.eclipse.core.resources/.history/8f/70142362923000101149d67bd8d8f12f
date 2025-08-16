@@ -1,0 +1,82 @@
+package com.gmail.terry996996.util;
+
+package com.gmail.terry996996.service;
+
+import com.gmail.terry996996.dao.MovieDAO;
+import com.gmail.terry996996.domain.MovieBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+@Service
+public class CsvImportService {
+
+    @Autowired
+    private MovieDAO movieDAO;
+
+    // 用於解析不同格式日期
+    private LocalDate parseDate(String dateStr) {
+        // 定義幾個可能的日期格式
+        DateTimeFormatter[] formatters = {
+            DateTimeFormatter.ofPattern("yyyy/M/d"),     // 格式：2025/1/25
+            DateTimeFormatter.ofPattern("yyyy/MM/dd"),   // 格式：2025/01/25
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")    // 格式：2025-01-25
+        };
+        
+        // 嘗試每個格式解析日期
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                return LocalDate.parse(dateStr, formatter);
+            } catch (DateTimeParseException e) {
+                // 若此格式無法解析，繼續嘗試下一個
+                continue;
+            }
+        }
+
+        // 若所有格式都無法解析，則返回 null 或拋出例外
+        throw new DateTimeParseException("無法解析日期：" + dateStr, dateStr, 0);
+    }
+
+    public void importCsv(String csvFilePath) throws IOException {
+        // 讀取 CSV 檔案
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFilePath))) {
+            String line;
+            reader.readLine(); // 跳過標題行
+
+            while ((line = reader.readLine()) != null) {
+                // 使用逗號分隔每一行的欄位
+                String[] fields = line.split(",");
+
+                // 確保欄位數量符合預期
+                if (fields.length == 8) { // 假設有8個欄位
+                    MovieBean movie = new MovieBean();
+                    movie.setCountry(fields[0].trim());  // 國別地區
+                    movie.setMovieName(fields[1].trim());  // 中文片名
+                    movie.setShowtimes(parseDate(fields[2].trim()));  // 上映日期 (轉換為 LocalDate)
+                    movie.setApplicant(fields[3].trim());  // 申請人
+                    movie.setProdUnit(fields[4].trim());  // 出品
+                    movie.setShowTheaterNum(Integer.parseInt(fields[5].trim()));  // 上映院數 (轉換為整數)
+                    movie.setBoxOffice(Long.parseLong(fields[6].trim().replace(",", "")));  // 銷售票數 (移除千位符號並轉換為整數)
+                    movie.setSales(Long.parseLong(fields[7].trim().replace(",", "")));  // 銷售金額 (移除千位符號並轉換為長整數)
+
+                    // 設定時間和使用者
+                    movie.setCreateTime(LocalDate.now());
+                    movie.setCreateName("admin");  // 假設預設為 admin
+                    movie.setUpdateTime(LocalDate.now());
+                    movie.setUpdateName("admin");  // 假設預設為 admin
+
+                    // 儲存至資料庫
+                    movieDAO.save(movie);
+                } else {
+                    System.out.println("錯誤: 這一行的資料格式不正確，跳過處理.");
+                }
+            }
+        }
+    }
+}

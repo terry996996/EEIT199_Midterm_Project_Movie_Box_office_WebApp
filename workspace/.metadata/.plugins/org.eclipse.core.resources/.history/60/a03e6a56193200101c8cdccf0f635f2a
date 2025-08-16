@@ -1,0 +1,20 @@
+package com.gmail.terry996996.dao;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import com.gmail.terry996996.domain.MovieBean;
+
+public interface MovieDAO extends JpaRepository<MovieBean, Integer>{
+
+	 // 同時用片名和國家模糊查詢
+    @Query("SELECT m FROM MovieBean m WHERE " +
+           "LOWER(m.movieName) LIKE LOWER(CONCAT('%', :movieName, '%')) " +
+           "AND LOWER(m.country) LIKE LOWER(CONCAT('%', :country, '%'))")
+    Page<MovieBean> searchByMovieNameOrCountry(@Param("movieName") String movieName,
+                                            @Param("country") String country,
+                                            Pageable pageable);
+}

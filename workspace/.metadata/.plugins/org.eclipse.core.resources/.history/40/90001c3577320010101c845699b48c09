@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="title">
+	<table border='1' style="width:100%">
+		<tr BGColor='#A8FF55' >
+		<td align="CENTER" >
+			<font face="Verdana, 標楷體" size="+3">
+				Session與Cookie的應用範例<br>
+				登入、登出與記住密碼
+		    </font>
+		</td>
+		</tr>
+	</table>
+</div>
+
+<div align="center" th:fragment="head_customer">
+	<a th:href="@{/customer_login}">登入</a> |  
+	<a th:href="@{/customer_update}">更新資料</a> |
+	<a th:href="@{/customer_list}">顯示資料</a> |
+	<a th:href="@{/customer_showMessage}">查看留言</a> |
+	<a th:if="${#ctx.containsVariable('LoginOK')}" th:href="@{/customer_logout}">登出</a>
+	<a th:unless="${#ctx.containsVariable('LoginOK')}" th:href="@{/}">回首頁</a>
+</div>
+</head>

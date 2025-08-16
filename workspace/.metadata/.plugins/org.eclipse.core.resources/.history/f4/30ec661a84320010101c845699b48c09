@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>註冊</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body id="testbc2">
+
+	<!--  <div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/cat.gif}"
+			style="width: 100px; position: fixed;" />-->
+
+		<h2>註冊帳號</h2>
+		<form th:action="@{/register}" method="post" th:object="${user}">
+			<label>帳號：</label> <input type="text" th:field="*{account}"
+				id="account" />
+			<div th:if="${#fields.hasErrors('account')}" th:errors="*{account}"
+				style="color: red"></div>
+			<div style="color: red;" th:unless="${#fields.hasErrors('account')}"
+				th:errors="*{account}"></div>
+			<br /> <label>密碼：</label> <input type="password"
+				th:field="*{password}" />
+			<div style="color: red;" th:if="${#fields.hasErrors('password')}"
+				th:errors="*{password}"></div>
+			<br /> <br>
+			<button type="submit" id="submitBtn">送出註冊</button>
+			<br> <br> <a th:href="@{login}">取消註冊，返回登入頁面~</a>
+		</form>
+		<br> <br> <br> <img th:src="@{/images/register.jpg}"
+			alt="register" width="300" height="300">
+	<!--  </div> -->
+
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+		</script>
+
+
+</body>
+
+</html>
+

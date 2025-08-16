@@ -1,0 +1,17 @@
+package com.gmail.terry996996.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name="movie")
+public class MovieBean {
+	
+	@Id
+	@Column(name = "")
+	
+	
+	
+
+}

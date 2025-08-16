@@ -1,0 +1,185 @@
+package com.gmail.terry996996.domain;
+
+import java.time.LocalDateTime;
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "movie")
+public class MovieBean {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "movie_id")
+    private Integer movieid;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "movie_name_cn")
+    private String movieName;
+
+    @Column(name = "showtimes")
+    private Date showtimes;
+
+    @Column(name = "applicant_company")
+    private String applicant;
+
+    @Column(name = "production_unit")
+    private String prodUnit;
+
+    @Column(name = "theater_showing_num")
+    private Integer showTheaterNum;
+
+    @Column(name = "box_office")
+    private Long boxOffice;
+
+    @Column(name = "box_office_sales")
+    private Double sales;
+
+    @Column(name = "img")
+    private String imgPath;
+    
+    @Column(name = "create_id")
+    private Integer createId;
+    
+    @Column(name = "create_time")
+    private LocalDateTime createTime;
+    
+    @Column(name = "update_id")
+    private Integer updateId;
+    
+    @Column(name = "update_time")
+    private Date updateTime;
+
+    public Integer getMovieid() {
+        return movieid;
+    }
+
+    public void setMovieid(Integer movieid) {
+        this.movieid = movieid;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getMovieName() {
+        return movieName;
+    }
+
+    public void setMovieName(String movieName) {
+        this.movieName = movieName;
+    }
+
+    public Date getShowtimes() {
+        return showtimes;
+    }
+
+    public void setShowtimes(Date showtimes) {
+        this.showtimes = showtimes;
+    }
+
+    public String getApplicant() {
+        return applicant;
+    }
+
+    public void setApplicant(String applicant) {
+        this.applicant = applicant;
+    }
+
+    public String getProdUnit() {
+        return prodUnit;
+    }
+
+    public void setProdUnit(String prodUnit) {
+        this.prodUnit = prodUnit;
+    }
+
+    public Integer getShowTheaterNum() {
+        return showTheaterNum;
+    }
+
+    public void setShowTheaterNum(Integer showTheaterNum) {
+        this.showTheaterNum = showTheaterNum;
+    }
+
+    public Long getBoxOffice() {
+        return boxOffice;
+    }
+
+    public void setBoxOffice(Long boxOffice) {
+        this.boxOffice = boxOffice;
+    }
+
+    public Double getSales() {
+        return sales;
+    }
+
+    public void setSales(Double sales) {
+        this.sales = sales;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
+	public Integer getCreateId() {
+		return createId;
+	}
+
+	public void setCreateId(Integer createId) {
+		this.createId = createId;
+	}
+
+	public LocalDateTime getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(LocalDateTime now) {
+		this.createTime = now;
+	}
+
+	public Integer getUpdateId() {
+		return updateId;
+	}
+
+	public void setUpdateId(Integer updateId) {
+		this.updateId = updateId;
+	}
+
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+	@Override
+	public String toString() {
+		return "MovieBean [movieid=" + movieid + ", country=" + country + ", movieName=" + movieName + ", showtimes="
+				+ showtimes + ", applicant=" + applicant + ", prodUnit=" + prodUnit + ", showTheaterNum="
+				+ showTheaterNum + ", boxOffice=" + boxOffice + ", sales=" + sales + ", imgPath=" + imgPath
+				+ ", createId=" + createId + ", createTime=" + createTime + ", updateId=" + updateId + ", updateTime="
+				+ updateTime + "]";
+	}
+    
+    
+}
+
+

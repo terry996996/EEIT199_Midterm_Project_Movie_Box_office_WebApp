@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>新增電影資料頁面</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+		<h1>新增電影資料頁面</h1>
+
+
+		<span th:if="${session.user != null}"
+			style="font-size: larger; color: rgb(227, 29, 187)">
+			使用者:&nbsp;&nbsp;<b th:text="${session.user.account}"
+			style="font-size: larger; color: rgb(227, 29, 187)">使用者</b>
+		</span> <br> <br>
+
+		<div style="text-align: center;">
+			<div
+				style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+
+				<div class="menu-button">
+					<a th:href="@{/movies/index}">回首頁</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/movies/findall}">查看所有電影列表</a>
+				</div>
+
+				<div class="menu-button active">
+					<span>新增電影</span>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/movies/upload}">上傳檔案</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/changePassword}">修改密碼</a>
+				</div>
+
+				<div class="menu-button">
+					<a th:href="@{/logout}">登出</a>
+				</div>
+
+			</div>
+		</div>
+
+
+
+		<br> <br>
+
+
+		<div class="form-container">
+			<form th:action="@{/movies/save}" th:object="${movie}" method="post">
+				<input type="hidden" th:field="*{movieid}" />
+				<div class="form-group">
+					<label class="label-group">國別地區</label> <input class="input-group" type="text" th:field="*{country}"
+						list="countryList" required autocomplete="off" />
+					<datalist id="countryList">
+						<option th:each="c : ${countries}" th:value="${c}"></option>
+					</datalist>
+				</div>
+				<div class="form-group">
+					<label class="label-group">中文片名</label><input class="input-group" type="text" th:field="*{movieName}"
+						list="movieNamesList" required autocomplete="off" />
+					<datalist id="movieNamesList">
+						<option th:each="c : ${movieNames}" th:value="${c}"></option>
+					</datalist>
+					<br />
+				</div>
+				<div class="form-group">
+					<label class="label-group">申請人</label><input class="input-group" type="text"
+						th:field="*{applicant}" list="applicantsList" required
+						autocomplete="off" />
+					<datalist id="applicantsList">
+						<option th:each="c : ${applicants}" th:value="${c}"></option>
+					</datalist>
+					<br />
+				</div>
+				<div class="form-group">
+					<label class="label-group">出品單位</label> <input class="input-group" type="text" th:field="*{prodUnit}"
+						list="prodUnitsList" required autocomplete="off" />
+					<datalist id="prodUnitsList">
+						<option th:each="c : ${prodUnits}" th:value="${c}"></option>
+					</datalist>
+					<br />
+				</div>
+				<div class="form-group">
+					<label class="label-group">上映院數</label> <input  class="input-group"type="number"
+						th:field="*{showTheaterNum}" required autocomplete="off" /><br />
+				</div>
+				<div class="form-group">
+					<label class="label-group">銷售票房</label> <input class="input-group" type="number" th:field="*{boxOffice}"
+						required autocomplete="off" /><br />
+				</div>
+				<div class="form-group">
+					<label class="label-group">銷售金額</label> <input class="input-group" type="number" th:field="*{sales}"
+						required autocomplete="off" /><br />
+				</div>
+				<div class="form-group">
+					<button class="form-button" type="submit">送出</button>
+
+
+					<input  class="form-button2" type="reset" value="清除">
+				</div>
+				<a th:href="@{/movies/findall}">返回電影列表</a>
+			</form>
+
+		</div>
+	</div>
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+		</script>
+</body>
+</html>

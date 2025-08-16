@@ -1,0 +1,31 @@
+package com.gmail.terry996996.util;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.gmail.terry996996.dao.MovieDAO;
+
+public class CsvImporter {
+	 @Autowired
+	 private MovieDAO daO;
+    public void importCsv(String filePath) throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+        String line;
+        
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/M/d"); // 原始格式
+
+        while ((line = reader.readLine()) != null) {
+            String[] fields = line.split(",");
+            String dateString = fields[2]; // 假設第三欄是日期
+            LocalDate showtimes = LocalDate.parse(dateString, formatter); // 轉換為 LocalDate
+
+            // 這裡可以將資料存儲到資料庫或進行其他處理
+        }
+        reader.close();
+    }
+}

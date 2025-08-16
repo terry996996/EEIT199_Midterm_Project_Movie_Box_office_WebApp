@@ -1,0 +1,14 @@
+package com.gmail.terry996996.dao;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.gmail.terry996996.domain.MovieBean;
+
+public interface MovieDAO extends JpaRepository<MovieBean, Integer>{
+
+	// Optional<MovieBean> findById(Long id);
+	//List<MovieBean> findByDistrict(String district);
+}

@@ -1,0 +1,18 @@
+1747152644400	Rename type 'MovieBeanDao'
+1747152813738	Extract interface 'MovieDAO'
+1747153529319	Rename package 'com.gmail.terry996996.services'
+1747157231227	Extract interface 'UserDAO'
+1747189915684	Delete element
+1747189928707	Rename resource 'index.html'
+1747194226237	Move files
+1747210628029	Copy file
+1747235120544	Move compilation unit
+1747235134319	Delete element
+1747236797483	Rename type 'LoginController'
+1747277630387	Delete element
+1747279655286	Delete element
+1747289167604	Delete element
+1747290841468	Delete element
+1747414802217	Delete element
+1747458549244	Rename resource 'adsearch.html'
+1747459326213	Rename resource 'advanced-search.html'

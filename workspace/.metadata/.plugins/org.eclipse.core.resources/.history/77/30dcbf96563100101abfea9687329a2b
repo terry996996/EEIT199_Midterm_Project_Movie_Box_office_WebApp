@@ -1,0 +1,20 @@
+//package com.gmail.terry996996.service;
+//
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
+//
+//import com.gmail.terry996996.dao.UserDAO;
+//
+//public class UserServiceImpl {
+//	@Autowired UserDAO userdao;
+//
+//    @Override
+//    public UserDAO loadUserByUsername(String username) throws UsernameNotFoundException {
+//        UserBean user = userdao.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+//        return User.builder()
+//            .username(user.getUsername())
+//            .password(user.getPassword())
+//            .roles("USER")
+//            .build();
+//    }
+//}

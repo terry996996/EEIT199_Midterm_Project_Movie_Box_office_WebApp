@@ -1,0 +1,58 @@
+package com.ispan.eeit.entity;
+
+import jakarta.validation.constraints.NotEmpty;
+
+public class LoginForm {
+
+	@NotEmpty(message = "帳號不可以是空白" )
+	private String customerId;
+	
+	@NotEmpty(message = "密碼不可以是空白" )
+	private String password;
+	
+	private Boolean rememberMe;
+
+	public LoginForm() {
+	}
+	
+	public LoginForm(String customerId, String password) {
+		this.customerId = customerId;
+		this.password = password;
+	}
+
+	public LoginForm(String customerId, String password, Boolean rememberMe) {
+		this.customerId = customerId;
+		this.password = password;
+		this.rememberMe = rememberMe;
+	}
+	
+	public String getCustomerId() {
+		return customerId;
+	}
+
+
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public Boolean getRememberMe() {
+		return rememberMe;
+	}
+
+	public void setRememberMe(Boolean rememberMe) {
+		this.rememberMe = rememberMe;
+	}
+
+	@Override
+	public String toString() {
+		return "LoginForm [customerId=" + customerId + ", password=" + password + ", rememberMe=" + rememberMe + "]";
+	}
+}

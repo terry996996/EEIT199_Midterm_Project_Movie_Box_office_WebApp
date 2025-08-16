@@ -1,0 +1,9 @@
+package com.gmail.terry996996.domain;
+
+
+
+@Entit
+public class MovieBean {
+
+
+}

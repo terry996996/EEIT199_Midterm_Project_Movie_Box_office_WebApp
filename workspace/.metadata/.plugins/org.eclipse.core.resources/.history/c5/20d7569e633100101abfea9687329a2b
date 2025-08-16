@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>登入</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+<div id = "testdiv" align="center">
+<img id="floatingMouse" th:src="@{/images/mouse3.png}" style="width: 100px;position: absolute;" />
+
+<h2 style="text-align: center;">使用者登入</h2>
+
+<form th:action="@{/login}" th:object="${user}" method="post">
+        <label style="text-align: center;">帳號：</label>
+        <input type="text" th:field="*{account}" />
+        <span th:if="${#fields.hasErrors('account')}" th:errors="*{account}"></span>
+        <label>密碼：</label>
+        <input type="password" th:field="*{password}" />
+        <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+    <div align="center" th:if="${loginError}" style="color:red;">
+        <p th:text="${loginError}"></p>
+    </div>
+    <br>
+    <button type="submit" style="padding: 5px 10px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">登入</button>
+    <br>
+    <a th:href="@{register}">還沒有帳號，點我立即註冊~</a>
+	<br><br><br>
+	<img th:src="@{/images/login.jpg}" alt="login" width="300" height="300">
+</form>
+<script>
+	const imgTag = document.querySelector('#floatingMouse');
+	 document.querySelector("#testdiv")
+            .addEventListener('mousemove', (e) => {
+                imgTag.style.transform = `translate(${e.offsetX + 20}px, ${e.offsetY + 20}px)`;
+            })
+</script>
+</div>
+</body>
+</html>

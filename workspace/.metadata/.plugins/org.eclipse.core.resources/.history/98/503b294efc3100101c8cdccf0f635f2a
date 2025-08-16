@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>CSV&JSON 上傳</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+		<h1>上傳電影資料(請上傳CSV或JSON格式檔案)</h1>
+		
+		<span th:if="${session.user != null}">
+        使用者:&nbsp;&nbsp;<b th:text="${session.user.account}" style="font-size: larger;">使用者</b></span>
+        
+        <br>
+        <br>
+		
+
+<div style="text-align: center; margin-top: 15px;">
+	<div style="display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+
+		<div class="menu-button" style="background-color: #e3f2fd;">
+			<a th:href="@{/movies/index}">回首頁</a>
+		</div>
+
+		<div class="menu-button" style="background-color: #c8e6c9;">
+			<a th:href="@{/movies/findall}">查看所有電影列表</a>
+		</div>
+
+		<div class="menu-button" style="background-color: #ffe0b2;">
+			<a th:href="@{/movies/create}">新增電影</a>
+		</div>
+
+		<div class="menu-button" style="background-color: #d1c4e9;">
+			<a th:href="@{/changePassword}">修改密碼</a>
+		</div>
+
+		<div class="menu-button" style="background-color: #ffcdd2;">
+			<a th:href="@{/logout}">登出</a>
+		</div>
+
+	</div>
+</div>
+
+		<br>
+
+
+		<div
+			style="border: 2px solid #ccc; padding: 15px; border-radius: 8px; display: inline-block; margin: 10px;">
+			<form th:action="@{/movies/upload}" method="post"
+				enctype="multipart/form-data">
+				<input type="file" name="file" accept=".csv,.json" required />
+				<button type="submit">上傳</button>
+			</form>
+		</div>
+
+		<br><br> <a th:href="@{/movies/findall}">返回</a>
+
+		<!-- 檔案轉換有問題時顯示下列訊息文字 -->
+		<p th:if="${message}" th:text="${message}" style="color: red;"></p>
+
+		<br> <br> <br> <img th:src="@{/images/file.jpg}"
+			alt="movie" width="500" height="500"> <br> <br> <br>
+
+
+	</div>
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+		</script>
+</body>
+</html>

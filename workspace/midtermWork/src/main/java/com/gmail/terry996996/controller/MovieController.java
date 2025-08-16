@@ -1,0 +1,305 @@
+package com.gmail.terry996996.controller;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.gmail.terry996996.dao.MovieDAO;
+import com.gmail.terry996996.domain.MovieBean;
+import com.gmail.terry996996.domain.UserBean;
+import com.gmail.terry996996.service.UploadService;
+
+import jakarta.servlet.http.HttpSession;
+
+@Controller
+@RequestMapping("/movies")
+public class MovieController {
+
+	@Autowired
+	private MovieDAO dao;
+
+	@Autowired
+	private UploadService uploadService;
+
+	// 首頁
+	@GetMapping("/index")
+	public String indexPage(HttpSession session, Model model) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+		return "movies/index";
+	}
+
+	// 查詢(findall)查看所有電影列表
+	@GetMapping("/findall")
+	public String listMovies(@RequestParam(defaultValue = "0") int page, HttpSession session, Model model) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+
+		Pageable pageable = PageRequest.of(page, 25); // 每頁 25 筆
+		Page<MovieBean> moviePage = dao.findAll(pageable);
+
+		int totalPages = moviePage.getTotalPages();
+		int currentPage = page;
+
+		// 計算 startPage 與 endPage，讓每次最多顯示 5 頁分頁
+		int windowSize = 5; // 顯示 5 個頁碼
+		int startPage = Math.max(0, currentPage - windowSize / 2);
+		int endPage = Math.min(startPage + windowSize - 1, totalPages - 1);
+
+		// 如果接近尾頁，調整 startPage 確保仍有 5 個頁碼顯示
+		if (endPage - startPage < windowSize - 1) {
+			startPage = Math.max(0, endPage - windowSize + 1);
+		}
+
+		model.addAttribute("moviePage", moviePage);
+		model.addAttribute("currentPage", currentPage);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+
+		return "movies/list";
+	}
+
+	// 條件(關鍵字)查詢
+	// 使用者搜尋輸入國家或電影的片名
+	@GetMapping("/search")
+	public String searchMovies(@RequestParam(required = false) String keyword,
+			@RequestParam(defaultValue = "0") int page, Model model, HttpSession session) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+
+		// 確保空字串傳給 DAO 查詢避免 NullPointer
+		String movieKeyword = (keyword != null) ? keyword.trim() : "";
+
+		Pageable pageable = PageRequest.of(page, 25, Sort.by("movieid").ascending());
+
+		// 分頁查詢
+		Page<MovieBean> moviePage = dao.searchByKeyword(movieKeyword, pageable);
+
+		int totalPages = moviePage.getTotalPages();
+		int pageBlockSize = 5;
+		int startPage = (page / pageBlockSize) * pageBlockSize;
+		int endPage = Math.min(startPage + pageBlockSize - 1, totalPages - 1);
+
+		// 如果接近尾頁，調整 startPage 讓仍有 5 個頁碼顯示
+		if (endPage - startPage < pageBlockSize - 1) {
+			startPage = Math.max(0, endPage - pageBlockSize + 1);
+		}
+
+		// 回傳查詢資料與查詢參數回前端維持狀態
+		model.addAttribute("moviePage", moviePage);
+		model.addAttribute("keyword", movieKeyword);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("startPage", startPage);
+		model.addAttribute("endPage", endPage);
+
+		return "movies/searchResult";
+	}
+
+	// 連結新增電影資料的表單頁面
+	@GetMapping("/create")
+	public String showCreateForm(Model model) {
+		model.addAttribute("movie", new MovieBean());
+		List<String> countries = List.of("臺灣", "美國", "日本", "韓國", "中國", "澳洲", "法國", "印度", "英國");
+		List<String> movieNames = List.of("少年PI的奇幻漂流", "MINECRAFT麥塊電影", "魔鬼終結者", "你的名字", "怪獸電力公司");
+		List<String> applicants = List.of("車庫娛樂股份有限公司", "可樂藝術文創股份有限公司", "木棉花國際股份有限公司", "華映國際文創股份有限公司", "天馬行空數位有限公司");
+		List<String> prodUnits = List.of("財團法人優人文化藝術基金會", "麵包情人電影有限公司", "RELAY MOTION KFT.", "曼尼娛樂投資股份有限公司", "松竹株式會社",
+				"TOEI COMPANY LTD.");
+		model.addAttribute("countries", countries);
+		model.addAttribute("movieNames", movieNames);
+		model.addAttribute("applicants", applicants);
+		model.addAttribute("prodUnits", prodUnits);
+		return "movies/form";
+	}
+
+	// 新增電影資料
+	@PostMapping("/save")
+	public String saveMovie(@ModelAttribute MovieBean movie, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		UserBean loginUser = (UserBean) session.getAttribute("user");
+		LocalDateTime now = LocalDateTime.now();
+		if (movie.getMovieid() == null) {
+			movie.setCreateTime(now);
+			movie.setCreateName(loginUser != null ? loginUser.getAccount() : "unknown");
+			movie.setUpdateTime(now);
+			movie.setUpdateName(loginUser != null ? loginUser.getAccount() : "unknown");
+		}
+		dao.save(movie);
+		// 新增完後，導回"查看所有電影列表"
+		redirectAttributes.addFlashAttribute("success2", "資料新增成功");
+		return "redirect:/movies/findall";
+	}
+
+	// 修改電影資料
+	// 顯示編輯頁面
+	@GetMapping("/edit/{id}")
+	public String showEditForm(@PathVariable("id") Integer id, Model model) {
+		MovieBean movie = dao.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid movie Id:" + id));
+		model.addAttribute("movie", movie);
+
+		List<String> countries = List.of("臺灣", "美國", "日本", "韓國", "中國", "澳洲", "法國", "印度", "英國");
+		List<String> movieeNames = List.of("少年PI的奇幻漂流", "MINECRAFT麥塊電影", "魔鬼終結者", "你的名字", "怪獸電力公司", "【我推的孩子】電影版");
+		List<String> applicants = List.of("車庫娛樂股份有限公司", "可樂藝術文創股份有限公司", "木棉花國際股份有限公司", "華映國際文創股份有限公司", "天馬行空數位有限公司",
+				"采昌國際多媒體股份有限公司");
+		List<String> prodUnits = List.of("財團法人優人文化藝術基金會", "麵包情人電影有限公司", "RELAY MOTION KFT.", "曼尼娛樂投資股份有限公司", "松竹株式會社",
+				"TOEI COMPANY LTD.");
+		model.addAttribute("countries", countries);
+		model.addAttribute("movieNames", movieeNames);
+		model.addAttribute("applicants", applicants);
+		model.addAttribute("prodUnits", prodUnits);
+		return "movies/update";
+	}
+
+	// 修改資料
+	@PostMapping("/update")
+	public String updateMovie(@ModelAttribute("movie") MovieBean movie, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		if (movie.getMovieid() == null) {
+			throw new IllegalArgumentException("電影ID不能為空");
+		}
+
+		// 檢查電影是否存在
+		MovieBean existingMovie = dao.findById(movie.getMovieid())
+				.orElseThrow(() -> new IllegalArgumentException("找不到電影 ID: " + movie.getMovieid()));
+
+		// 保留原始創建信息
+		movie.setCreateTime(existingMovie.getCreateTime());
+		movie.setCreateName(existingMovie.getCreateName());
+
+		// 更新修改信息
+		UserBean loginUser = (UserBean) session.getAttribute("user");
+		LocalDateTime now = LocalDateTime.now();
+		movie.setUpdateTime(now);
+		if (loginUser != null) {
+			movie.setUpdateName(loginUser.getAccount());
+		} else {
+			movie.setUpdateName("unknown");
+		}
+
+		// 保存更新
+		dao.save(movie);
+
+		// 修改資料完後，導回"查看所有電影列表"
+		redirectAttributes.addFlashAttribute("success2", "資料修改成功");
+		return "redirect:/movies/findall";
+	}
+
+	// 刪除資料
+	@GetMapping("/delete/{id}")
+	public String deleteMovie(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+		dao.deleteById(id);
+		// 刪除完之後導回，導回"查看所有電影列表"
+		redirectAttributes.addFlashAttribute("success2", "資料刪除成功");
+		return "redirect:/movies/findall";
+	}
+
+	// 上傳CSV檔案
+
+	// 顯示 CSV 上傳頁面
+	@GetMapping("/upload")
+	public String showUploadPage(HttpSession session) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+		return "movies/upload";
+	}
+
+	@PostMapping("/upload")
+	public String uploadFile(@RequestParam("file") MultipartFile file, Model model, HttpSession session,
+			RedirectAttributes redirectAttributes) {
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+
+		// 空檔案檢查
+		String fileName = file.getOriginalFilename();
+		if (fileName == null || fileName.isEmpty()) {
+			redirectAttributes.addFlashAttribute("error", "檔案名稱無效");
+			return "redirect:/movies/upload";
+		}
+
+		// 副檔名驗證
+		try {
+			if (fileName.endsWith(".csv")) {
+				uploadService.importFromCsv(file, session);
+				redirectAttributes.addFlashAttribute("success", "檔案上傳並處理成功！");
+				return "redirect:/movies/upload";
+			} else if (fileName.endsWith(".json")) {
+				uploadService.importFromJson(file, session);
+				redirectAttributes.addFlashAttribute("success", "檔案上傳並處理成功！");
+				return "redirect:/movies/upload";
+			} else {
+				redirectAttributes.addFlashAttribute("error", "請上傳 CSV 或 JSON 格式檔案");
+				return "redirect:/movies/upload";
+			}
+
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "處理檔案時發生錯誤：" + e.getMessage());
+		}
+
+		return "movies/upload";
+	}
+
+	// 寫入CSV檔案內的資料(需要呼叫轉檔程式) ps 需要改成登入後才能上傳csv
+
+	// // 接收並寫入CSV檔案內的資料
+
+	@GetMapping("/advanced-search")
+	public String showAdvancedSearchForm(HttpSession session) {
+		// 檢查用戶是否登入
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+		return "movies/advancedform";
+	}
+
+	@GetMapping("/advanced")
+	public String advancedSearch(
+			@RequestParam(required = false) String country,
+			@RequestParam(required = false) String movieName,
+			@RequestParam(required = false) String applicant,
+			@RequestParam(required = false) String prodUnit,
+			@RequestParam(required = false) Integer minTheaterNum,
+			@RequestParam(required = false) Integer maxTheaterNum,
+			@RequestParam(required = false) Long minSales,
+			@RequestParam(required = false) Long maxSales,
+			@RequestParam(required = false) Long minBoxOffice,
+			@RequestParam(required = false) Long maxBoxOffice,
+			@RequestParam(defaultValue = "0") int page,
+			Model model, HttpSession session) {
+
+		if (session.getAttribute("user") == null) {
+			return "redirect:/login";
+		}
+
+		Pageable pageable = PageRequest.of(page, 25, Sort.by("movieid").ascending()); // 每頁25筆
+		Page<MovieBean> moviePage = dao.advancedSearch(
+				country, movieName, applicant, prodUnit, minTheaterNum, maxTheaterNum, minSales, maxSales, minBoxOffice,
+				maxBoxOffice, pageable);
+
+		model.addAttribute("moviePage", moviePage);
+		model.addAttribute("currentPage", page);
+		model.addAttribute("startPage", Math.max(0, page - 2));
+		model.addAttribute("endPage", Math.min(moviePage.getTotalPages() - 1, page + 2));
+
+		return "movies/advanced"; // 對應 thymeleaf 頁面
+	}
+
+}

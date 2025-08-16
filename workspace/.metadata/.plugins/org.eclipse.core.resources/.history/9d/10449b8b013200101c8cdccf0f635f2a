@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>修改電影資料頁面</title>
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/mouse3.png}"
+			style="width: 100px; position: fixed;" />
+		<h1>修改電影資料頁面</h1>
+		<form th:action="@{/movies/update}" th:object="${movie}" method="post">
+			<input type="hidden" th:field="*{movieid}" /> <label>國別地區：</label> <input
+				type="text" th:field="*{country}" list="countryList" required />
+			<datalist id="countryList">
+				<option th:each="c : ${countries}" th:value="${c}"></option>
+			</datalist>
+			<br /> <label>中文片名：</label> <input type="text"
+				th:field="*{movieName}" list="movieNamesList" required />
+			<datalist id="movieNamesList">
+				<option th:each="c : ${movieNames}" th:value="${c}"></option>
+			</datalist>
+			<br /> <label>申請人：</label> <input type="text"
+				th:field="*{applicant}" required /><br /> <label>出品單位：</label> <input
+				type="text" th:field="*{prodUnit}" required /><br /> <label>上映院數：</label>
+			<input type="number" th:field="*{showTheaterNum}" required /><br />
+			<label>銷售票房：</label> <input type="number" th:field="*{boxOffice}"
+				required /><br /> <label>銷售金額：</label> <input type="number"
+				th:field="*{sales}" required /><br />
+
+			<button type="submit">儲存</button>
+			<a th:href="@{/movies/findall}">取消</a>
+		</form>
+	</div>
+	<script>
+			const imgTag = document.querySelector('#floatingMouse');
+	 				document.querySelector("#testdiv")
+			 				.addEventListener('mousemove', (e) => {
+    						const offset = 5;
+    						const imgWidth = imgTag.offsetWidth;
+    						const imgHeight = imgTag.offsetHeight;
+    						const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+    						const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+
+    						imgTag.style.left = `${x}px`;
+    						imgTag.style.top = `${y}px`;
+			  		});
+		</script>
+
+</body>
+</html>

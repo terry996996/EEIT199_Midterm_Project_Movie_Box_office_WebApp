@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>進階搜尋</title>
+<link rel="stylesheet" th:href="@{/css/styles.css}" type="text/css" />
+</head>
+<body>
+	<div id="testdiv" align="center">
+		<img id="floatingMouse" th:src="@{/images/cat.gif}"
+			style="width: 100px; position: fixed;" />
+		<div align="center">
+			<h1>電影進階搜尋</h1>
+
+			<span th:if="${session.user != null}"
+				style="font-size: larger; color: rgb(227, 29, 187)">
+				使用者:&nbsp;&nbsp;<b th:text="${session.user.account}"
+				style="font-size: larger; color: rgb(227, 29, 187)">使用者</b>
+			</span> <br> <br>
+
+			<div style="text-align: center;">
+				<div
+					style="display: inline-flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+					<div class="menu-button">
+						<a th:href="@{/movies/index}">回首頁</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/findall}">查看所有電影列表</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/create}">新增電影</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/movies/upload}">上傳檔案</a>
+					</div>
+
+					<div class="menu-button active">
+						<span>進階搜尋</span>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/changePassword}">修改密碼</a>
+					</div>
+
+					<div class="menu-button">
+						<a th:href="@{/logout}">登出</a>
+					</div>
+				</div>
+			</div>
+
+			<br>
+			<div
+				style="max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+				<h2 style="color: purple;">請輸入搜尋條件</h2>
+				<p style="color: red; margin-bottom: 30px;">至少須填寫一個搜尋條件</p>
+				
+
+				<form th:action="@{/movies/advanced}" method="get" id="searchForm"
+					style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; ">
+					<div>
+						<label class="label-group" for="country">國別地區</label> <input class="input-group" type="text" id="country"
+							name="country" placeholder="輸入國別地區關鍵字" autocomplete="off" style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="movieName">中文片名</label> <input class="input-group" type="text"
+							id="movieName" name="movieName" placeholder="輸入中文片名關鍵字" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="applicant">申請公司</label> <input class="input-group" type="text"
+							id="applicant" name="applicant" placeholder="輸入申請公司關鍵字" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="prodUnit">出品單位</label> <input class="input-group" type="text"
+							id="prodUnit" name="prodUnit" placeholder="輸入出品單位關鍵字" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="minTheaterNum">上映院數下限</label> <input class="input-group" type="number"
+							id="minTheaterNum" name="minTheaterNum" placeholder="輸入上映院數下限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="maxTheaterNum">上映院數上限</label> <input class="input-group" type="number"
+							id="maxTheaterNum" name="maxTheaterNum" placeholder="輸入上映院數上限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="minSales">銷售金額下限</label> <input class="input-group" type="number"
+							id="minSales" name="minSales" placeholder="輸入銷售金額下限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="maxSales">銷售金額上限</label> <input class="input-group" type="number"
+							id="maxSales" name="maxSales" placeholder="輸入銷售金額上限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div>
+						<label class="label-group" for="minBoxOffice">銷售票房下限</label> <input class="input-group" type="number"
+							id="minBoxOffice" name="minBoxOffice" placeholder="輸入銷售票房下限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+
+					<div>
+						<label class="label-group" for="maxBoxOffice">銷售票房上限</label> <input class="input-group" type="number"
+							id="maxBoxOffice" name="maxBoxOffice" placeholder="輸入銷售票房上限" autocomplete="off"
+							style="width: 90%;" />
+					</div>
+
+					<div
+						style="grid-column: span 2; text-align: center; margin-top: 25px;">
+						<button type="submit"
+							style="padding: 10px 30px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">搜尋</button>
+						<button type="reset"
+							style="padding: 10px 30px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;">重設</button>
+					</div>
+				</form>
+				<br>
+				<div style="text-align: center;">
+					<a th:href="@{/movies/findall}">返回電影列表</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+            const imgTag = document.querySelector('#floatingMouse');
+            document.querySelector("#testdiv")
+                .addEventListener('mousemove', (e) => {
+                    const offset = 5;
+                    const imgWidth = imgTag.offsetWidth;
+                    const imgHeight = imgTag.offsetHeight;
+                    const x = Math.min(window.innerWidth - imgWidth, e.clientX + offset);
+                    const y = Math.min(window.innerHeight - imgHeight, e.clientY + offset);
+                    
+                    imgTag.style.left = `${x}px`;
+                    imgTag.style.top = `${y}px`;
+                });
+                
+            document.getElementById("searchForm").addEventListener("submit", function(event) {
+                const requiredFields = ["country", "movieName", "applicant", "prodUnit", "minTheaterNum", "maxTheaterNum", "minSales", "maxSales", "minBoxOffice", "maxBoxOffice"];
+                const hasInput = requiredFields.some(id => document.querySelector(`[name='${id}']`).value.trim() !== "");
+                if (!hasInput) {
+                    alert("請至少輸入一個查詢條件！");
+                    event.preventDefault();
+                }
+            });
+        </script>
+</body>
+</html>
