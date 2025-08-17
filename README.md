@@ -4,7 +4,7 @@
 
 🔵 展示影片連結:
 
-https://www.youtube.com/watch?v=yyHiuUkLULo
+https://www.youtube.com/watch?v=OrwU9O8tnjI
 
 🔵 本機快速run版本啟動本專案步驟:
 
